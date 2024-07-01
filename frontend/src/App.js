@@ -3,6 +3,9 @@ import FileUpload from './Components/FileUpload';
 import DataTable from './Components/DataTable';
 import axios from 'axios';
 import './Components/style.css';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 const App = () => {
   const [data, setData] = useState([]);
@@ -26,7 +29,7 @@ const App = () => {
       if (response.data.errors) {
         setErrors(response.data.errors);
       } else {
-        alert('Data successfully uploaded');
+        toast.success('Data successfully uploaded');
         setData([]);
         setErrors([]);
       }
@@ -72,6 +75,7 @@ const App = () => {
           </div>
         </>
       )}
+      <ToastContainer />
     </div>
   );
 };
