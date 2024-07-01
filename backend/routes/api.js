@@ -48,39 +48,55 @@ router.post('/upload', upload.single('file'), (req, res) => {
 });
 
 router.post('/confirm', async (req, res) => {
-  const { data } = req.body;
-
-  try {
-    for (const item of data) {
-      const company = new Company({
-        name: item['Company Name'],
-        address: item['Company Address'],
-        phone: item['Company Phone'],
-        email: item['Company Email'],
-        website: item['Company Website'],
-        employees: item['Number of Employees'],
-        founded: item['Founded Date'],
-        industry: item['Industry Type'],
-      });
-
-      await company.save();
-
-      const contact = new Contact({
-        name: item['Contact Name'],
-        email: item['Contact Email'],
-        phone: item['Contact Phone'],
-        dob: item['Date of Birth'],
-        type: item['Contact Type'],
-        company: company._id,
-      });
-
-      await contact.save();
+    const { data } = req.body;
+  
+    try {
+      for (const item of data) {
+        // Check if company already exists
+        let company = await Company.findOne({ name: item['Company Name'] });
+  
+        if (!company) {
+          // Create new company if it doesn't exist
+          company = new Company({
+            name: item['Company Name'],
+            address: item['Company Address'],
+            phone: item['Company Phone'],
+            email: item['Company Email'],
+            website: item['Company Website'],
+            employees: item['Number of Employees'],
+            founded: item['Founded Date'],
+            industry: item['Industry Type'],
+          });
+  
+          await company.save();
+        }
+  
+        // Check if contact already exists by email
+        let contact = await Contact.findOne({ email: item['Contact Email'] });
+  
+        if (!contact) {
+          // Create new contact linked to the company
+          contact = new Contact({
+            name: item['Contact Name'],
+            email: item['Contact Email'],
+            phone: item['Contact Phone'],
+            dob: item['Date of Birth'],
+            type: item['Contact Type'],
+            company: company._id,
+          });
+  
+          await contact.save();
+        } else {
+          // If contact exists, update its details if needed
+          // Optionally, you can update contact details here if required
+        }
+      }
+  
+      res.status(200).json({ message: 'Data successfully saved' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-
-    res.status(200).json({ message: 'Data successfully saved' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 });
+  
 
 module.exports = router;

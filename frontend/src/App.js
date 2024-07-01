@@ -19,7 +19,7 @@ const App = () => {
 
   const confirmUpload = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/confirm', { data });
+      const response = await axios.post('https://shipmnts-tffd.onrender.com/api/confirm', { data });
       if (response.data.errors) {
         setErrors(response.data.errors);
       } else {
@@ -36,6 +36,7 @@ const App = () => {
   return (
     <div>
       <h1>Upload Company and Contact Data</h1>
+      <h3>If your company already exit then we update only your contact</h3>
       <FileUpload onUpload={handleUpload} />
       {data.length > 0 && (
         <>

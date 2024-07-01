@@ -20,7 +20,7 @@ const FileUpload = ({ onUpload }) => {
     data.append('file', file);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/upload', data);
+      const response = await axios.post('https://shipmnts-tffd.onrender.com/api/upload', data);
       if (response.data.errors) {
         setError(response.data.errors.join(', '));
       } else {
